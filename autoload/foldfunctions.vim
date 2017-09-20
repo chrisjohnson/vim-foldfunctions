@@ -21,9 +21,11 @@ function foldfunctions#javascript()
 endf
 
 function foldfunctions#foldjavascript(lnum)
-	" TODO
 endf
 
+"JS:
+"start=<function>
+"end=\}
 function foldfunctions#ruby()
 	call foldfunctions#init()
 	setlocal foldexpr=foldfunctions#foldruby(v:lnum)
@@ -40,8 +42,8 @@ function foldfunctions#foldruby(lnum)
 		endif
 		return s:lev
 	else
-		let startmatches = matchlist(line, '\v^(\s*)<def>')
-		if startmatches[0] != ''
+		let startmatches = matchlist(line, '\v^(\s*)(<def>)')
+		if startmatches[2] != ''
 			let s:indentLevel = indent(a:lnum)
 			let s:lev = 1
 			return '>1'

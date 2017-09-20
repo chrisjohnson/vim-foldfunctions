@@ -1,14 +1,6 @@
 # vim-foldfunctions
-Set the foldlevel and foldnestmax according to the top-most level that functions/methods are defined at
+This was cobbled together to give me more useful folding. I was tired of managing nested fold levels, all I really ever care about is folding top-level functions, nothing below that.
 
-foldmethod=expr
-Examples:
+So for the supported languages (currently PHP, Ruby, JS), it will override the default foldmethod with the built-in expr handling approach, set foldlevel=0 and foldnestmax=1, and declare all top-level functions (and everything inside) as foldlevel 1, and everything else as foldlevel 0
 
-https://github.com/mgedmin/dotvim/blob/master/syntax/python.vim
-https://gist.github.com/vim-voom/4390083
-https://www.ibm.com/developerworks/library/l-vim-script-1/index.html#N101CB
-https://vi.stackexchange.com/questions/2176/how-to-write-a-fold-expr
-
-Track the indentation when a foldlevel starts in a variable
-For any given line, if the line ends a foldlevel (use the indentation level to track), end foldlevel
-Else, return = to maintain current fold level
+This plugin is pretty naive at parsing your source code. It doesn't claim to be perfect. It also largely depends on sane indentation. It may or may not support tabs, but I'm sure it wouldn't be hard to add support if I got back around to using a codebase with tabs.

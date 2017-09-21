@@ -1,6 +1,42 @@
 # vim-foldfunctions
-This was cobbled together to give me more useful folding. I was tired of managing nested fold levels, all I really ever care about is folding top-level functions, nothing below that.
+Find top-level functions (from a naive parsing POV, not actual language syntax), and make them the only folds in the file.
 
-So for the supported languages (currently PHP, Ruby, JS), it will override the default foldmethod with the built-in expr handling approach, set foldlevel=0 and foldnestmax=1, and declare all top-level functions (and everything inside) as foldlevel 1, and everything else as foldlevel 0
+In supported files, overrides the default `foldmethod` with the included expr handling approach, which depends on **sane indentation** (functions start and end on the same indentation level).
 
-This plugin is pretty naive at parsing your source code. It doesn't claim to be perfect. It also largely depends on sane indentation. It may or may not support tabs, but I'm sure it wouldn't be hard to add support if I got back around to using a codebase with tabs.
+May not work with tabs, but it wouldn't be hard to add support (PRs welcome).
+
+## Supported Languages
+
+- Ruby
+- PHP
+- Javascript
+
+## Usage
+
+Just load it! In the languages it supports, it will enable itself and set the appropriate `foldlevel` and `foldnestmax`. Otherwise it will leave your global options alone. My .vimrc looks like this:
+
+```
+" Folding
+
+" Defaults for non-parsed languages
+set foldlevel=1
+set foldmethod=syntax
+
+" Global settings for all folding
+set foldminlines=3
+set foldcolumn=1
+
+set foldtext=MyFoldText() 
+function! MyFoldText()
+	let n = v:foldend - v:foldstart + 1 
+	let line = getline(v:foldstart)
+	let sub = substitute(line, '^\s*', '', 'g')
+	return "+-- " . sub . " --(" . n . " lines)" . v:folddashes
+endfunction
+
+" Mappings
+" Space to toggle folds
+nnoremap <Space> za
+" <leader>Space to focus on current fold
+nnoremap <leader><Space> zMzv:set foldminlines=1<cr>
+```

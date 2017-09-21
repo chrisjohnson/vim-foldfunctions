@@ -9,7 +9,7 @@ endf
 
 function foldfunctions#php()
 	call foldfunctions#init()
-	setlocal foldexpr=foldfunctions#fold(v:lnum,'((abstract\|final)\ )\?((private\|protected\|public)\ )\?(static\ )\?<function>','\}')
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'((abstract|final) )?((private|protected|public) )?(static )?<function>','\}')"
 endf
 
 function foldfunctions#javascript()

@@ -24,28 +24,27 @@ function foldfunctions#ruby()
 endf
 
 function foldfunctions#fold(lnum, startToken, endToken)
+	let line = getline(a:lnum)
+
+	" This is not a complete top-to-bottom parsing, get context
 	if a:lnum != s:lnum
 		if a:lnum == 1
-			let s:lev = 0
-			let startmatches = matchlist(line, '\v^(\s*)(' . a:startToken . ')')
-			if startmatches[2] != ''
-				let s:lev = 1
+			let s:lev = foldfunctions#isstart(line, a:startToken) ? '>1' : 0
+		else
+			" Assume the level of the previous line
+			let prevLine = a:lnum - 1
+			let s:lev = foldlevel(prevLine)
+			" ... unless that line ends a fold, then go back up
+			let s:indentLevel = indent(foldfunctions#foldstart(prevLine))
+			echom 'prevLine:' . prevLine . ' :: isend:' . foldfunctions#isend(getline(prevLine), a:endToken) . ' :: s:lev:' . s:lev . ' :: s:indentLevel:' . s:indentLevel . ' :: foldstart:' . foldfunctions#foldstart(prevLine) . ' :: line:' . getline(prevLine)
+			if foldfunctions#isend(getline(prevLine), a:endToken)
+				echom 'found'
+				let s:lev = 0
 			endif
-		endif
-		" This is not an in-order parsing, get context
-		" Assume the level of the previous line
-		let prevLine = a:lnum - 1
-		let s:lev = foldlevel(prevLine)
-		" ... unless that line ends a fold, then go back up
-		let s:indentLevel = indent(foldfunctions#foldstart(prevLine))
-		echom 'prevLine:' . prevLine . ' :: isend:' . foldfunctions#isend(getline(prevLine), a:endToken) . ' :: s:lev:' . s:lev . ' :: s:indentLevel:' . s:indentLevel . ' :: foldstart:' . foldfunctions#foldstart(prevLine) . ' :: line:' . getline(prevLine)
-		if foldfunctions#isend(getline(prevLine), a:endToken)
-			echom 'found'
-			let s:lev = 0
 		endif
 	endif
 
-	let line = getline(a:lnum)
+	" We have context, parse using indentation level
 	let s:lnum = a:lnum + 1
 	if s:lev > 0
 		if foldfunctions#isend(line, a:endToken)
@@ -55,8 +54,7 @@ function foldfunctions#fold(lnum, startToken, endToken)
 		endif
 		return 1
 	else
-		let startmatches = matchlist(line, '\v^(\s*)(' . a:startToken . ')')
-		if startmatches[2] != ''
+		if foldfunctions#isstart(line, a:startToken)
 			let s:indentLevel = indent(a:lnum)
 			let s:lev = 1
 			return '>1'
@@ -88,6 +86,15 @@ function foldfunctions#foldstart(lnum)
 
 	echom 'foldfunctions#foldstart(' . a:lnum . '):-1'
 	return -1
+endfunction
+
+function foldfunctions#isstart(line, startToken)
+	let startmatches = matchlist(a:line, '\v^\s*(' . a:startToken . ')')
+	if startmatches[1] != ''
+		return 1
+	endif
+
+	return 0
 endfunction
 
 function foldfunctions#isend(line, endToken)

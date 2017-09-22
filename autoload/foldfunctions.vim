@@ -18,6 +18,11 @@ function foldfunctions#javascript()
 	setlocal foldexpr=foldfunctions#fold(v:lnum,'<function>','\}')
 endf
 
+function foldfunctions#vim()
+	call foldfunctions#init()
+	setlocal foldexpr=foldfunctions#fold(v:lnum,'<function>','<endf')
+endf
+
 function foldfunctions#ruby()
 	call foldfunctions#init()
 	setlocal foldexpr=foldfunctions#fold(v:lnum,'<def>','<end>')

@@ -7,11 +7,12 @@ May not work with tabs, but it wouldn't be hard to add support (PRs welcome).
 
 ![Screenshot](http://g.recordit.co/v8eYn3mCQl.gif)
 
-## Supported Languages
+## Supported FileTypes
 
-- Ruby
-- PHP
-- Javascript
+- ruby
+- php
+- javascript
+- vim
 
 ## Usage
 

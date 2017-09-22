@@ -1,11 +1,11 @@
-let [s:lev, s:indentLevel, s:lnum] = [0, 0, 1]
+let [b:lev, b:indentLevel, b:lnum] = [0, 0, 1]
 function foldfunctions#init()
 	setlocal foldmethod=expr
 	setlocal foldlevel=0
 	setlocal foldnestmax=1
-	let s:lev = 0
-	let s:indentLevel = 0
-	let s:lnum = 1
+	let b:lev = 0
+	let b:indentLevel = 0
+	let b:lnum = 1
 endf
 
 function foldfunctions#php()
@@ -27,36 +27,36 @@ function foldfunctions#fold(lnum, startToken, endToken)
 	let line = getline(a:lnum)
 
 	" This is not a complete top-to-bottom parsing, get context
-	if a:lnum != s:lnum
+	if a:lnum != b:lnum
 		if a:lnum == 1
-			let s:lev = foldfunctions#isstart(line, a:startToken) ? '>1' : 0
+			let b:lev = foldfunctions#isstart(line, a:startToken) ? 1 : 0
+			let b:indentLevel = indent(a:lnum)
 		else
 			" Assume the level of the previous line
 			let prevLine = a:lnum - 1
-			let s:lev = foldlevel(prevLine)
+			let b:lev = foldlevel(prevLine)
 			" ... unless that line ends a fold, then go back up
-			let s:indentLevel = indent(foldfunctions#foldstart(prevLine))
-			echom 'prevLine:' . prevLine . ' :: isend:' . foldfunctions#isend(getline(prevLine), a:endToken) . ' :: s:lev:' . s:lev . ' :: s:indentLevel:' . s:indentLevel . ' :: foldstart:' . foldfunctions#foldstart(prevLine) . ' :: line:' . getline(prevLine)
+			let b:indentLevel = indent(foldfunctions#foldstart(prevLine))
 			if foldfunctions#isend(getline(prevLine), a:endToken)
-				echom 'found'
-				let s:lev = 0
+				let b:lev = 0
+				let b:indentLevel = 0
 			endif
 		endif
 	endif
 
 	" We have context, parse using indentation level
-	let s:lnum = a:lnum + 1
-	if s:lev > 0
+	let b:lnum = a:lnum + 1
+	if b:lev > 0
 		if foldfunctions#isend(line, a:endToken)
-			let s:indentLevel = 0
-			let s:lev = 0
+			let b:indentLevel = 0
+			let b:lev = 0
 			return '<1'
 		endif
 		return 1
 	else
 		if foldfunctions#isstart(line, a:startToken)
-			let s:indentLevel = indent(a:lnum)
-			let s:lev = 1
+			let b:indentLevel = indent(a:lnum)
+			let b:lev = 1
 			return '>1'
 		endif
 	endif
@@ -69,22 +69,17 @@ function foldfunctions#foldstart(lnum)
 	let currentLine = a:lnum
 	let startLevel = foldlevel(a:lnum)
 	if currentLine == 1
-		echom 'foldfunctions#foldstart(' . a:lnum . '):' . (startLevel > 0 ? 1 : -1)
 		return startLevel > 0 ? 1 : -1
 	endif
-	echom 'startLevel:' . startLevel
 	while currentLine > 0
 		let currentLevel = foldlevel(currentLine)
-		echom currentLine . '::' . currentLevel
 		if (currentLevel < startLevel) || (currentLine == 1)
-			echom 'foldfunctions#foldstart(' . a:lnum . '):' . (currentLine + 1)
 			return currentLine + 1
 		endif
 		" Load the next line
 		let currentLine -= 1
 	endwhile
 
-	echom 'foldfunctions#foldstart(' . a:lnum . '):-1'
 	return -1
 endfunction
 
@@ -97,9 +92,10 @@ function foldfunctions#isstart(line, startToken)
 	return 0
 endfunction
 
+" Depends on b:indentLevel being set
 function foldfunctions#isend(line, endToken)
-	let indentMatch = s:indentLevel > 0 ? '\s{' . s:indentLevel . '}' : ''
-	if (a:line =~ '\v^' . indentMatch . a:endToken) && (s:lev > 0)
+	let indentMatch = b:indentLevel > 0 ? '\s{' . b:indentLevel . '}' : ''
+	if (a:line =~ '\v^' . indentMatch . a:endToken) && (b:lev > 0)
 		return 1
 	endif
 

@@ -5,6 +5,8 @@ In supported files, overrides the default `foldmethod` with the included expr ha
 
 May not work with tabs, but it wouldn't be hard to add support (PRs welcome).
 
+![Screenshot](http://g.recordit.co/v8eYn3mCQl.gif)
+
 ## Supported Languages
 
 - Ruby

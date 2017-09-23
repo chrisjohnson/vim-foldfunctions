@@ -43,3 +43,19 @@ nnoremap <Space> za
 " <leader>Space to focus on current fold
 nnoremap <leader><Space> zMzv:set foldminlines=1<cr>
 ```
+
+## Re-running
+
+An occasional issue with iterative fold parsing like this is that it doesn't know when the "last line" state which it tracks is still the line it thinks it was. If it detects a change it will re-orient itself but some conditions will prevent it from detecting that.
+
+You could reload the file to re-parse, or you could trigger the FileType autocmds automatically, like such:
+
+```
+autocmd FileType qf nnoremap <silent> <buffer> t <C-W><Enter><C-W>T
+```
+
+... becomes ...
+
+```
+autocmd FileType qf nnoremap <silent> <buffer> t <C-W><Enter><C-W>T :doauto FileType<CR>
+```

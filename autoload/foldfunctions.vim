@@ -28,6 +28,12 @@ function foldfunctions#ruby()
 	setlocal foldexpr=foldfunctions#fold(v:lnum,'<def>','<end>')
 endf
 
+function foldfunctions#cpp()
+	call foldfunctions#init()
+	"TODO: Figure out how to rule out top-level if statements (if they exist)
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'(public\:|protected\:|private\:)?((const )*(void|int|unsigned int|long|unsigned long|float|double|(class .*)|(enum .*)))?.+\\(.*\\{','\}')"
+endf
+
 function foldfunctions#fold(lnum, startToken, endToken)
 	let line = getline(a:lnum)
 

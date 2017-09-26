@@ -1,5 +1,5 @@
 let [b:lev, b:indentLevel, b:lnum] = [0, 0, 1]
-function foldfunctions#init()
+function! foldfunctions#init()
 	setlocal foldmethod=expr
 	setlocal foldlevel=0
 	setlocal foldnestmax=1
@@ -8,32 +8,32 @@ function foldfunctions#init()
 	let b:lnum = 1
 endf
 
-function foldfunctions#php()
+function! foldfunctions#php()
 	call foldfunctions#init()
 	let &l:foldexpr = "foldfunctions#fold(v:lnum,'((abstract|final) )?((private|protected|public) )?(static )?<function>','\}')"
 endf
 
-function foldfunctions#javascript()
+function! foldfunctions#javascript()
 	call foldfunctions#init()
 	setlocal foldexpr=foldfunctions#fold(v:lnum,'<function>','\}')
 endf
 
-function foldfunctions#vim()
+function! foldfunctions#vim()
 	call foldfunctions#init()
 	setlocal foldexpr=foldfunctions#fold(v:lnum,'<function>','<endf')
 endf
 
-function foldfunctions#ruby()
+function! foldfunctions#ruby()
 	call foldfunctions#init()
 	setlocal foldexpr=foldfunctions#fold(v:lnum,'<def>','<end>')
 endf
 
-function foldfunctions#cpp()
+function! foldfunctions#cpp()
 	call foldfunctions#init()
 	let &l:foldexpr = "foldfunctions#fold(v:lnum,'.+\\(.*\\)(\\s*const\\s*)?\\s*\\{','\}')"
 endf
 
-function foldfunctions#fold(lnum, startToken, endToken)
+function! foldfunctions#fold(lnum, startToken, endToken)
 	let line = getline(a:lnum)
 
 	" This is not a complete top-to-bottom parsing, get context
@@ -74,7 +74,7 @@ function foldfunctions#fold(lnum, startToken, endToken)
 	return 0
 endf
 
-function foldfunctions#foldstart(lnum)
+function! foldfunctions#foldstart(lnum)
 	let [currentLevel, foldStart] = [-1, -1]
 	let currentLine = a:lnum
 	let startLevel = foldlevel(a:lnum)

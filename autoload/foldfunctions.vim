@@ -30,16 +30,17 @@ endf
 
 function! foldfunctions#cpp()
 	call foldfunctions#init()
-	let &l:foldexpr = "foldfunctions#fold(v:lnum,'.+\\(.*\\)(\\s*const\\s*)?\\s*\\{','\}')"
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'.+\\(.*\\)(\\s*const\\s*)?\\s*','\}','\\{')"
 endf
 
-function! foldfunctions#fold(lnum, startToken, endToken)
+function! foldfunctions#fold(lnum, startToken, endToken, ...)
 	let line = getline(a:lnum)
+	let l:nextLineStartToken = get(a:, 1, '')
 
 	" This is not a complete top-to-bottom parsing, get context
 	if a:lnum != b:lnum
 		if a:lnum == 1
-			let b:lev = foldfunctions#isstart(line, a:startToken) ? 1 : 0
+			let b:lev = foldfunctions#isstart(line, a:lnum + 1, l:nextLineStartToken) ? 1 : 0
 			let b:indentLevel = indent(a:lnum)
 		else
 			" Assume the level of the previous line
@@ -64,7 +65,7 @@ function! foldfunctions#fold(lnum, startToken, endToken)
 		endif
 		return 1
 	else
-		if foldfunctions#isstart(line, a:startToken)
+		if foldfunctions#isstart(line, a:startToken, a:lnum + 1, l:nextLineStartToken)
 			let b:indentLevel = indent(a:lnum)
 			let b:lev = 1
 			return '>1'
@@ -93,9 +94,24 @@ function! foldfunctions#foldstart(lnum)
 	return -1
 endfunction
 
-function foldfunctions#isstart(line, startToken)
-	if a:line =~ '\v^\s*(' . a:startToken . ')'
-		return 1
+function! foldfunctions#isstart(line, startToken, ...)
+	let l:nextLnum = get(a:, 1, 0)
+	let l:nextLineStartToken = get(a:, 2, '')
+
+	if l:nextLineStartToken == ''
+		" The startToken is all in a single expression
+		return a:line =~ '\v^\s*(' . a:startToken . ')' ? 1 : 0
+	else
+		" Try the next-line token on the current line first
+		if a:line =~ '\v^\s*(' . a:startToken . l:nextLineStartToken . ')'
+			return 1
+		endif
+			" Try it split over both lines
+			let l:nextLine = getline(l:nextLnum)
+			if a:line =~ '\v^\s*(' . a:startToken . ')' && l:nextLine =~ '\v^\s*(' . l:nextLineStartToken . ')'
+				return 1
+			endif
+		endif
 	endif
 
 	return 0

@@ -30,8 +30,7 @@ endf
 
 function foldfunctions#cpp()
 	call foldfunctions#init()
-	"TODO: Figure out how to rule out top-level if statements (if they exist)
-	let &l:foldexpr = "foldfunctions#fold(v:lnum,'(public\:|protected\:|private\:)?((const )*(void|int|unsigned int|long|unsigned long|float|double|(class .*)|(enum .*)))?.+\\(.*\\{','\}')"
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'.+\\(.*\\)(\\s*const\\s*)?\\s*\\{','\}')"
 endf
 
 function foldfunctions#fold(lnum, startToken, endToken)

@@ -94,8 +94,7 @@ function foldfunctions#foldstart(lnum)
 endfunction
 
 function foldfunctions#isstart(line, startToken)
-	let startmatches = matchlist(a:line, '\v^\s*(' . a:startToken . ')')
-	if startmatches[1] != ''
+	if a:line =~ '\v^\s*(' . a:startToken . ')'
 		return 1
 	endif
 

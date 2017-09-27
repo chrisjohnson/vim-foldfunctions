@@ -30,7 +30,7 @@ endf
 
 function! foldfunctions#cpp()
 	call foldfunctions#init()
-	let &l:foldexpr = "foldfunctions#fold(v:lnum,'.+\\(.*\\)(\\s*const\\s*)?\\s*','\}','\\{')"
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'\s*([^\/[:space:]]|\/[^\/]).*\\(.*\\)(\\s*const\\s*)?\\s*','\}','\\{\\s*$')"
 endf
 
 function! foldfunctions#fold(lnum, startToken, endToken, ...)

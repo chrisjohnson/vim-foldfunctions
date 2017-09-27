@@ -3,6 +3,8 @@ Find top-level functions (from a naive parsing POV, not actual language syntax),
 
 In supported files, overrides the default `foldmethod` with the included expr handling approach, which depends on **sane indentation** (functions start and end on the same indentation level).
 
+Please report cases in the issues tab but realize that I'm not going to bend the plugin over backward to support every edge case for every language.
+
 ![Screenshot](http://g.recordit.co/AKUiqTjJWO.gif)
 
 ## Supported FileTypes
@@ -11,15 +13,14 @@ In supported files, overrides the default `foldmethod` with the included expr ha
 - php
 - javascript
 - vim
+- cpp
 
 ## Usage
 
 Just load it! In the languages it supports, it will enable itself and set the appropriate `foldlevel` and `foldnestmax`. Otherwise it will leave your global options alone. My .vimrc looks like this:
 
 ```
-" Folding
-
-" Defaults for non-parsed languages
+" Defaults for unsupported FileTypes
 set foldlevel=1
 set foldmethod=syntax
 

@@ -3,8 +3,6 @@ Find top-level functions (from a naive parsing POV, not actual language syntax),
 
 In supported files, overrides the default `foldmethod` with the included expr handling approach, which depends on **sane indentation** (functions start and end on the same indentation level).
 
-May not work with tabs, but it wouldn't be hard to add support (PRs welcome).
-
 ![Screenshot](http://g.recordit.co/AKUiqTjJWO.gif)
 
 ## Supported FileTypes

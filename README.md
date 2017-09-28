@@ -50,11 +50,13 @@ An occasional issue with iterative fold parsing like this is that it doesn't kno
 You could reload the file to re-parse, or you could trigger the FileType autocmds automatically, like such:
 
 ```
+" t in quickfix to open in new tab
 autocmd FileType qf nnoremap <silent> <buffer> t <C-W><Enter><C-W>T
 ```
 
 ... becomes ...
 
 ```
+" t in quickfix to open in new tab (and re-run folding)
 autocmd FileType qf nnoremap <silent> <buffer> t <C-W><Enter><C-W>T :doauto FileType<CR>
 ```

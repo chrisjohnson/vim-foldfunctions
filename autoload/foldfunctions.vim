@@ -41,7 +41,6 @@ function! foldfunctions#fold(lnum, startToken, endToken, ...)
 	if a:lnum != b:lnum
 		if a:lnum == 1
 			let b:lev = foldfunctions#isstart(line, a:lnum + 1, l:nextLineStartToken) ? 1 : 0
-			let b:indentMatch = foldfunctions#getindent(line)
 		else
 			" Assume the level of the previous line
 			let prevLine = a:lnum - 1

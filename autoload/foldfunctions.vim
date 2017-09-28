@@ -15,17 +15,17 @@ endf
 
 function! foldfunctions#javascript()
 	call foldfunctions#init()
-	setlocal foldexpr=foldfunctions#fold(v:lnum,'<function>','\}')
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'([^\/[:space:]]|\/[^\/]).*\\(.*\\)\\s*','\}','\\{\\s*$')"
 endf
 
 function! foldfunctions#vim()
 	call foldfunctions#init()
-	setlocal foldexpr=foldfunctions#fold(v:lnum,'<function>','<endf')
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'<function>','<endf')"
 endf
 
 function! foldfunctions#ruby()
 	call foldfunctions#init()
-	setlocal foldexpr=foldfunctions#fold(v:lnum,'<def>','<end>')
+	let &l:foldexpr = "foldfunctions#fold(v:lnum,'<def>','<end>')"
 endf
 
 function! foldfunctions#cpp()

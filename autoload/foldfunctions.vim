@@ -40,16 +40,27 @@ function! foldfunctions#fold(lnum, startToken, endToken, ...)
 	" This is not a complete top-to-bottom parsing, get context
 	if a:lnum != b:lnum
 		if a:lnum == 1
+			" First line, either it starts a fold or it doesn't
 			let b:lev = foldfunctions#isstart(line, a:lnum + 1, l:nextLineStartToken) ? 1 : 0
 		else
-			" Assume the level of the previous line
 			let prevLine = a:lnum - 1
-			let b:lev = foldlevel(prevLine)
-			" ... unless that line ends a fold, then go back up
-			let b:indentMatch = foldfunctions#getindent(getline(foldfunctions#foldstart(prevLine)))
-			if foldfunctions#isend(getline(prevLine), a:endToken)
+			let prevLevel = foldlevel(prevLine)
+			if prevLevel == 0
+				" Previous line wasn't in a fold, so assume level 0
 				let b:lev = 0
 				let b:indentMatch = ''
+			else
+				let foldstart = foldfunctions#foldstart(prevLine)
+				let foldstartIndent = foldfunctions#getindent(getline(foldstart))
+				if foldfunctions#isend(getline(prevLine), a:endToken, foldstartIndent, prevLevel)
+					" Previous line ends a fold, so assume level 0
+					let b:lev = 0
+					let b:indentMatch = ''
+				else
+					" Previous line does not end a fold, so assume its level (for now)
+					let b:lev = prevLevel
+					let b:indentMatch = foldstartIndent
+				endif
 			endif
 		endif
 	endif
@@ -82,7 +93,11 @@ function! foldfunctions#foldstart(lnum)
 	endif
 	while currentLine > 0
 		let currentLevel = foldlevel(currentLine)
-		if (currentLevel < startLevel) || (currentLine == 1)
+		if currentLine == 1 && !(currentLevel < startLevel)
+			" Got to line 1 and it hasn't gone down, so line 1 is foldstart
+			return 1
+		elseif currentLevel < startLevel
+			" Level went down, so currentLine + 1 is foldstart
 			return currentLine + 1
 		endif
 		" Load the next line

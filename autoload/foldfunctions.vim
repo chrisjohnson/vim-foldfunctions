@@ -93,6 +93,7 @@ function! foldfunctions#foldstart(lnum)
 	return -1
 endfunction
 
+" Sets b:indentMatch
 function! foldfunctions#isstart(line, startToken, ...)
 	let l:nextLnum = get(a:, 1, 0)
 	let l:nextLineStartToken = get(a:, 2, '')
@@ -126,9 +127,12 @@ function! foldfunctions#isstart(line, startToken, ...)
 	return 0
 endfunction
 
-" Depends on b:indentMatch being set
-function! foldfunctions#isend(line, endToken)
-	if (a:line =~ '\v^' . b:indentMatch . a:endToken) && (b:lev > 0)
+" Depends on b:indentMatch being set or passed in
+" Depends on b:lev being set or passed in
+function! foldfunctions#isend(line, endToken, ...)
+	let l:indentMatch = get(a:, 1, b:indentMatch)
+	let l:lev = get(a:, 2, b:lev)
+	if (a:line =~ '\v^' . l:indentMatch . a:endToken) && (l:lev > 0)
 		return 1
 	endif
 

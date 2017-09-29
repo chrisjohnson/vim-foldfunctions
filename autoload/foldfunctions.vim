@@ -85,12 +85,16 @@ function! foldfunctions#fold(lnum, startToken, endToken, ...)
 endf
 
 function! foldfunctions#foldstart(lnum)
-	let [currentLevel, foldStart] = [-1, -1]
-	let currentLine = a:lnum
 	let startLevel = foldlevel(a:lnum)
-	if currentLine == 1
-		return startLevel > 0 ? 1 : -1
+	if startLevel == 0
+		return -1
 	endif
+	if a:lnum == 1
+		return 1
+	endif
+
+	let currentLevel = -1
+	let currentLine = a:lnum
 	while currentLine > 0
 		let currentLevel = foldlevel(currentLine)
 		if currentLine == 1 && !(currentLevel < startLevel)

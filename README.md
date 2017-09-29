@@ -60,3 +60,9 @@ autocmd FileType qf nnoremap <silent> <buffer> t <C-W><Enter><C-W>T
 " t in quickfix to open in new tab (and re-run folding)
 autocmd FileType qf nnoremap <silent> <buffer> t <C-W><Enter><C-W>T :doauto FileType<CR>
 ```
+
+## Why not use syntax rules?
+
+Because they're slow, especially for large files. I'm fine with having a few edge cases that this doesn't catch at the expense of faster startup times.
+
+For example, checking if a given line is a comment using this snippet: `map(synstack(a:lnum, col([a:lnum, '$'])), "synIDattr(v:val, 'name')")` slows down the entire plugin 8-fold vs my naive regex

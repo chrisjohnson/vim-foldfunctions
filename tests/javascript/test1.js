@@ -7,3 +7,12 @@ class Bar {
     // ==== SHOULD NOT BE VISIBLE ====
   }
 }
+
+/*
+ * Should be visible:
+class Bar {
+  something () {
+    // Should be visible
+  }
+}
+*/
